@@ -3,7 +3,8 @@ import streamlit as st
 import numpy as np
 
 
-st.header('Book Recommender System Using Machine Learning')
+st.header('Book Recommendation System')
+st.subheader('Made by CHUN KAI LI')
 
 model = pickle.load(open('models/model.pkl','rb'))  
 book_names = pickle.load(open('models/book_names.pkl','rb'))
@@ -11,7 +12,7 @@ book_ratings = pickle.load(open('models/book_ratings.pkl','rb'))
 pivot_table = pickle.load(open('models/pivot_table.pkl','rb'))
 
 book_selected = st.selectbox(
-    "Search for the title or pick one from the list below",
+    "Ask for recommendation by searching title of the book you like or pick one from the list below",
     book_names
 )
 
