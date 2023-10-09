@@ -11,10 +11,12 @@ book_names = pickle.load(open('models/book_names.pkl','rb'))
 book_ratings = pickle.load(open('models/book_ratings.pkl','rb'))
 pivot_table = pickle.load(open('models/pivot_table.pkl','rb'))
 
+st.write("Ask for recommendation by searching title of the book you like or pick one from the list below ")
 book_selected = st.selectbox(
-    "Ask for recommendation by searching title of the book you like or pick one from the list below",
+    "e.g. 'Lord of the rings' or 'Harry Potter'",
     book_names
 )
+
 
 def fetch_poster(suggestion):
     book_name = []
