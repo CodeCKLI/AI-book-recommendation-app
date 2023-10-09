@@ -6,7 +6,7 @@ import numpy as np
 st.header('Book Recommendation System')
 st.subheader('Made by CHUN KAI LI')
 
-model = pickle.load(open('models/model.pkl','rb'))  
+model = pickle.load(open('models/similarity_scores.pkl','rb'))  
 book_names = pickle.load(open('models/book_names.pkl','rb'))
 book_ratings = pickle.load(open('models/book_ratings.pkl','rb'))
 pivot_table = pickle.load(open('models/pivot_table.pkl','rb'))
@@ -18,74 +18,69 @@ book_selected = st.selectbox(
 )
 
 
-def fetch_poster(suggestion):
-    book_name = []
-    ids_index = []
-    poster_url = []
-
-    for book_id in suggestion:
-        book_name.append(pivot_table.index[book_id])
-
-    for name in book_name[0]: 
-        ids = np.where(book_ratings['BTitle'] == name)[0][0]
-        ids_index.append(ids)
-
-    for idx in ids_index:
-        url = book_ratings.iloc[idx]['IMG']
-        poster_url.append(url)
-
-    return poster_url
-
-
-
 def recommend_function(book_name):
-    books_list = []
-    book_id = np.where(pivot_table.index == book_name)[0][0]
-    distance, suggestion = model.kneighbors(pivot_table.iloc[book_id,:].values.reshape(1,-1), n_neighbors=10 )
-    poster_url = fetch_poster(suggestion)
-
-    for num in range(len(suggestion)):
-            books = pivot_table.index[suggestion[num]]
-            for book in books:
-                books_list.append(book)
-    return books_list , poster_url    
+    index = np.where(pivot_table.index==book_name)[0][0]
+    similar_items = sorted(list(enumerate(model[index])),key=lambda x:x[1],reverse=True)[1:10]
+    
+    data = []
+    for i in similar_items:
+        item = []
+        similarity = i
+        item.extend(similarity)
+        temp_df = book_ratings[book_ratings['BTitle'] == pivot_table.index[i[0]]]
+        item.extend(list(temp_df.drop_duplicates('BTitle')['BTitle'].values))
+        item.extend(list(temp_df.drop_duplicates('BTitle')['BAuthor'].values))
+        item.extend(list(temp_df.drop_duplicates('BTitle')['IMG'].values))
+        
+        data.append(item)
+    
+    return data
 
 if st.button('Surprise me!'):
-    recommended_books,poster_url = recommend_function(book_selected)
+    recommended_books = recommend_function(book_selected)
+
     col11, col12, col13= st.columns(3)
     col21, col22, col23= st.columns(3)
-    col31, col32, col33= st.columns(3)
 
     st.write("How would you rate this recommendation?")
     st.button("I LIKE the recommendations", type="primary")
     st.button("I DON'T LIKE the recommendations")
 
     with col11:
-        st.text(recommended_books[1])
-        st.image(poster_url[1])
+      similarity1 = round((recommended_books[0][1])*100, 2)
+      st.image(recommended_books[0][4])
+      st.markdown(f"Similarity Score to target: {similarity1}")
+      st.caption(recommended_books[0][2])
+      st.caption(recommended_books[0][3])
     with col12:
-        st.text(recommended_books[2])
-        st.image(poster_url[2])
+      similarity2 = round((recommended_books[1][1])*100, 2)
+      st.image(recommended_books[1][4])
+      st.markdown(f"Similarity Score to target: {similarity2}")
+      st.caption(recommended_books[1][2])
+      st.caption(recommended_books[1][3])
     with col13:
-        st.text(recommended_books[3])
-        st.image(poster_url[3])
-
+      similarity3 = round((recommended_books[2][1])*100, 2)
+      st.image(recommended_books[2][4])
+      st.markdown(f"Similarity Score to target: {similarity3}")
+      st.caption(recommended_books[2][2])
+      st.caption(recommended_books[2][3])
+    
     with col21:
-        st.text(recommended_books[4])
-        st.image(poster_url[4])
+      similarity4 = round((recommended_books[4][1])*100, 2)
+      st.image(recommended_books[4][4])
+      st.markdown(f"Similarity Score to target: {similarity4}")
+      st.caption(recommended_books[4][2])
+      st.caption(recommended_books[4][3])
     with col22:
-        st.text(recommended_books[5])
-        st.image(poster_url[5])
+      similarity5 = round((recommended_books[5][1])*100, 2)
+      st.image(recommended_books[5][4])
+      st.markdown(f"Similarity Score to target: {similarity5}")
+      st.caption(recommended_books[5][2])
+      st.caption(recommended_books[5][3])
     with col23:
-        st.text(recommended_books[6])
-        st.image(poster_url[6])
+      similarity6 = round((recommended_books[6][1])*100, 2)
+      st.image(recommended_books[6][4])
+      st.markdown(f"Similarity Score to target: {similarity6}")
+      st.caption(recommended_books[6][2])
+      st.caption(recommended_books[6][3])
 
-    with col31:
-        st.text(recommended_books[7])
-        st.image(poster_url[7])
-    with col32:
-        st.text(recommended_books[8])
-        st.image(poster_url[8])
-    with col33:
-        st.text(recommended_books[9])
-        st.image(poster_url[9])
