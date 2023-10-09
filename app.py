@@ -52,6 +52,10 @@ if st.button('Surprise me!'):
     recommended_books,poster_url = recommend_function(book_selected)
     col1, col2, col3= st.columns(3)
 
+    st.write("How would you rate this recommendation?")
+    st.button("I LIKE the recommendations", type="primary")
+    st.button("I DON'T LIKE the recommendations")
+
     with col1:
         st.text(recommended_books[1])
         st.image(poster_url[1])
